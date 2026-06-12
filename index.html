@@ -4,10 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>আমার হিসাব</title>
-    <link rel="icon" type="image/png" href="icon.png">
-    <link rel="manifest" href="manifest.json">
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="logo.png">
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json?v=2">
     <meta name="theme-color" content="#1e3a8a">
+    <!-- Tailwind CSS for Professional UI -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SweetAlert2 for Professional Alerts -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
@@ -16,10 +20,12 @@
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
 
+    <!-- Auth Section (Login) -->
     <div id="auth-section" class="flex-1 flex items-center justify-center p-4">
         <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100 text-center">
             <div class="flex justify-center mb-4">
-                <img src="icon.png" alt="Logo" class="w-20 h-20 rounded-2xl shadow-md">
+                <!-- App Logo -->
+                <img src="logo.png" alt="Logo" class="w-20 h-20 rounded-2xl shadow-md">
             </div>
             <h2 class="text-2xl font-bold text-blue-900 mb-2">আমার হিসাব</h2>
             <p class="text-gray-500 text-sm mb-6">আপনার ডিভাইসে নিরাপদ ও ব্যক্তিগত ডিজিটাল খাতা</p>
@@ -33,10 +39,12 @@
         </div>
     </div>
 
+    <!-- Main App Section -->
     <div id="app-section" class="hidden-section flex flex-col flex-1">
+        <!-- Header -->
         <header class="bg-blue-900 text-white px-4 py-4 shadow-md sticky top-0 z-50 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <img src="icon.png" alt="Logo" class="w-9 h-9 rounded-lg">
+                <img src="logo.png" alt="Logo" class="w-9 h-9 rounded-lg">
                 <h1 class="text-xl font-bold">আমার হিসাব</h1>
             </div>
             <div class="flex items-center gap-2">
@@ -45,6 +53,7 @@
             </div>
         </header>
 
+        <!-- Dashboard / Summary -->
         <main class="p-4 max-w-4xl mx-auto w-full flex-1">
             <div class="grid grid-cols-3 gap-3 mb-6">
                 <div class="bg-green-50 p-4 rounded-xl border border-green-200 text-center shadow-sm">
@@ -61,21 +70,25 @@
                 </div>
             </div>
 
+            <!-- Add Customer Button & Search -->
             <div class="flex gap-2 mb-4">
                 <input type="text" id="search-input" oninput="renderCustomers()" placeholder="গ্রাহকের নাম খুঁজুন..." class="flex-1 px-4 py-2 border rounded-xl focus:outline-none focus:border-blue-900 shadow-sm text-sm">
                 <button onclick="openAddCustomerModal()" class="bg-blue-900 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-blue-800 transition shadow">+ নতুন কাস্টমার</button>
             </div>
 
+            <!-- Customer List -->
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="p-4 border-b border-gray-100 bg-gray-50/70">
                     <h3 class="font-bold text-gray-700">গ্রাহক তালিকা ও হিসাব</h3>
                 </div>
                 <div id="customer-list" class="divide-y divide-gray-100">
-                    </div>
+                    <!-- Customers will be dynamic -->
+                </div>
             </div>
         </main>
     </div>
 
+    <!-- JavaScript logic -->
     <script>
         let db;
         let currentUserPin = null;
