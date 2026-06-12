@@ -1,10 +1,9 @@
-const CACHE_NAME = 'talikhata-v1';
+const CACHE_NAME = 'amarhisab-v2';
 const ASSETS = [
   'index.html',
   'manifest.json'
 ];
 
-// Install Service Worker
 self.addEventListener('install', (e) => {
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
@@ -13,7 +12,6 @@ self.addEventListener('install', (e) => {
   );
 });
 
-// Activate Service Worker
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys().then((keys) => {
@@ -28,7 +26,6 @@ self.addEventListener('activate', (e) => {
   );
 });
 
-// Fetch Assets Offline
 self.addEventListener('fetch', (e) => {
   e.respondWith(
     caches.match(e.request).then((cachedResponse) => {
