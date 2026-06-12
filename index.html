@@ -4,14 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>আমার হিসাব</title>
-    <!-- Favicon -->
     <link rel="icon" type="image/png" href="logo.png">
-    <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json?v=2">
     <meta name="theme-color" content="#1e3a8a">
-    <!-- Tailwind CSS for Professional UI -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- SweetAlert2 for Professional Alerts -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
@@ -20,11 +16,9 @@
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
 
-    <!-- Auth Section (Login) -->
     <div id="auth-section" class="flex-1 flex items-center justify-center p-4">
         <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100 text-center">
             <div class="flex justify-center mb-4">
-                <!-- App Logo -->
                 <img src="logo.png" alt="Logo" class="w-20 h-20 rounded-2xl shadow-md">
             </div>
             <h2 class="text-2xl font-bold text-blue-900 mb-2">আমার হিসাব</h2>
@@ -39,21 +33,36 @@
         </div>
     </div>
 
-    <!-- Main App Section -->
     <div id="app-section" class="hidden-section flex flex-col flex-1">
-        <!-- Header -->
-        <header class="bg-blue-900 text-white px-4 py-4 shadow-md sticky top-0 z-50 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <img src="logo.png" alt="Logo" class="w-9 h-9 rounded-lg">
-                <h1 class="text-xl font-bold">আমার হিসাব</h1>
+        <header class="bg-blue-900 text-white px-4 py-4 shadow-md sticky top-0 z-50 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
+                <div class="flex items-center gap-3">
+                    <img src="logo.png" alt="Logo" class="w-9 h-9 rounded-lg">
+                    <h1 class="text-xl font-bold">আমার হিসাব</h1>
+                </div>
+                <button id="install-btn" class="hidden-section sm:hidden bg-amber-500 hover:bg-amber-600 text-xs text-white font-bold px-3 py-2 rounded-lg transition shadow">এপ্স ডাউনলোড</button>
             </div>
-            <div class="flex items-center gap-2">
-                <button id="install-btn" class="hidden-section bg-amber-500 hover:bg-amber-600 text-xs text-white font-bold px-3 py-2 rounded-lg transition shadow">এপ্স ডাউনলোড</button>
-                <button onclick="logout()" class="bg-red-600 hover:bg-red-700 text-xs px-3 py-2 rounded-lg font-medium transition">লগআউট</button>
+            
+            <div class="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto border-t border-blue-800 pt-2 sm:pt-0 sm:border-0">
+                <div class="flex gap-1.5">
+                    <button onclick="exportBackup()" class="bg-blue-700 hover:bg-blue-600 text-[11px] text-white font-medium px-2.5 py-1.5 rounded-lg transition shadow flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                        ব্যাকআপ ডাউনলোড
+                    </button>
+                    <button onclick="importBackup()" class="bg-emerald-600 hover:bg-emerald-500 text-[11px] text-white font-medium px-2.5 py-1.5 rounded-lg transition shadow flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                        ব্যাকআপ ইম্পোর্ট
+                    </button>
+                </div>
+                <div class="flex gap-1.5">
+                    <button id="install-btn-desktop" class="hidden-section hidden sm:block bg-amber-500 hover:bg-amber-600 text-xs text-white font-bold px-3 py-2 rounded-lg transition shadow">এপ্স ডাউনলোড</button>
+                    <button onclick="logout()" class="bg-red-600 hover:bg-red-700 text-xs px-3 py-2 rounded-lg font-medium transition shadow">লগআউট</button>
+                </div>
             </div>
         </header>
 
-        <!-- Dashboard / Summary -->
+        <input type="file" id="backup-file-input" accept=".json" class="hidden-section" onchange="handleBackupFile(this)">
+
         <main class="p-4 max-w-4xl mx-auto w-full flex-1">
             <div class="grid grid-cols-3 gap-3 mb-6">
                 <div class="bg-green-50 p-4 rounded-xl border border-green-200 text-center shadow-sm">
@@ -70,25 +79,21 @@
                 </div>
             </div>
 
-            <!-- Add Customer Button & Search -->
             <div class="flex gap-2 mb-4">
                 <input type="text" id="search-input" oninput="renderCustomers()" placeholder="গ্রাহকের নাম খুঁজুন..." class="flex-1 px-4 py-2 border rounded-xl focus:outline-none focus:border-blue-900 shadow-sm text-sm">
                 <button onclick="openAddCustomerModal()" class="bg-blue-900 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-blue-800 transition shadow">+ নতুন কাস্টমার</button>
             </div>
 
-            <!-- Customer List -->
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="p-4 border-b border-gray-100 bg-gray-50/70">
                     <h3 class="font-bold text-gray-700">গ্রাহক তালিকা ও হিসাব</h3>
                 </div>
                 <div id="customer-list" class="divide-y divide-gray-100">
-                    <!-- Customers will be dynamic -->
-                </div>
+                    </div>
             </div>
         </main>
     </div>
 
-    <!-- JavaScript logic -->
     <script>
         let db;
         let currentUserPin = null;
@@ -136,13 +141,13 @@
                 const tx = db.transaction("settings", "readwrite");
                 tx.objectStore("settings").put(pinInput, "user_pin");
                 currentUserPin = pinInput;
-                Swal.fire({ icon: 'success', title: 'পিন সেট হয়েছে', text: 'আপনার সিকিউরিটি পিন সফলভাবে তৈরি হয়েছে।', timer: 2000, showConfirmButton: false });
+                Swal.fire({ icon: 'success', title: 'পিন সেট হয়েছে', text: 'আপনার সিকিউরিটি পিন সফলভাবে তৈরি হয়েছে।', timer: 2000, showConfirmButton: false });
                 loadApp();
             } else {
                 if (pinInput === currentUserPin) {
                     loadApp();
                 } else {
-                    Swal.fire({ icon: 'error', title: 'ভুল পিন', text: 'সঠিক পিন নাম্বার দিয়ে আবার চেষ্টা করুন।' });
+                    Swal.fire({ icon: 'error', title: 'ভুল পিন', text: 'সঠিক পিন নাম্বার দিয়ে আবার চেষ্টা করুন।' });
                 }
             }
         }
@@ -183,7 +188,7 @@
             const filteredCustomers = customers.filter(c => c.name.toLowerCase().includes(searchQuery) || c.phone.includes(searchQuery));
 
             if(filteredCustomers.length === 0) {
-                listContainer.innerHTML = `<p class="p-8 text-center text-gray-400 text-sm">কোনো কাস্টমার পাওয়া যায়নি।</p>`;
+                listContainer.innerHTML = `<p class="p-8 text-center text-gray-400 text-sm">কোনো কাস্টমার পাওয়া যায়নি।</p>`;
             }
 
             filteredCustomers.forEach(customer => {
@@ -254,7 +259,7 @@
                 const tx = db.transaction("customers", "readwrite");
                 tx.objectStore("customers").add(newCustomer);
                 tx.oncomplete = () => {
-                    Swal.fire({ icon: 'success', title: 'সফল', text: 'নতুন গ্রাহক তালিকাভুক্ত হয়েছে।', timer: 1500, showConfirmButton: false });
+                    Swal.fire({ icon: 'success', title: 'সফল', text: 'নতুন গ্রাহক তালিকাভুক্ত হয়েছে।', timer: 1500, showConfirmButton: false });
                     loadCustomers();
                 };
             }
@@ -328,7 +333,7 @@
                 const tx = db.transaction("customers", "readwrite");
                 tx.objectStore("customers").put(customer);
                 tx.oncomplete = () => {
-                    Swal.fire({ icon: 'success', title: 'লেনদেন যুক্ত হয়েছে', timer: 1000, showConfirmButton: false });
+                    Swal.fire({ icon: 'success', title: 'লেনদেন যুক্ত হয়েছে', timer: 1000, showConfirmButton: false });
                     loadCustomers();
                 };
             }
@@ -353,11 +358,11 @@
                     const tx = db.transaction("customers", "readwrite");
                     tx.objectStore("customers").delete(id);
                     tx.oncomplete = () => {
-                        Swal.fire({ icon: 'success', title: 'ডিলিট সম্পন্ন হয়েছে', text: 'গ্রাহকের তথ্য মুছে ফেলা হয়েছে।', timer: 1500, showConfirmButton: false });
+                        Swal.fire({ icon: 'success', title: 'ডিলিট সম্পন্ন হয়েছে', text: 'গ্রাহকের তথ্য মুছে ফেলা হয়েছে।', timer: 1500, showConfirmButton: false });
                         loadCustomers();
                     };
                 } else {
-                    Swal.fire({ icon: 'error', title: 'ভুল পিন', text: 'পিন কোড সঠিক নয়, ডিলিট করা যায়নি।' });
+                    Swal.fire({ icon: 'error', title: 'ভুল পিন', text: 'পিন কোড সঠিক নয়, ডিলিট করা যায়নি।' });
                 }
             }
         }
@@ -383,13 +388,119 @@
                     const tx = db.transaction("customers", "readwrite");
                     tx.objectStore("customers").put(customer);
                     tx.oncomplete = () => {
-                        Swal.fire({ icon: 'success', title: 'ডিলিট হয়েছে', timer: 1000, showConfirmButton: false });
+                        Swal.fire({ icon: 'success', title: 'ডিলিট হয়েছে', timer: 1000, showConfirmButton: false });
                         loadCustomers();
                     };
                 } else {
-                    Swal.fire({ icon: 'error', title: 'ভুল পিন', text: 'পিন কোড সঠিক নয়!' });
+                    Swal.fire({ icon: 'error', title: 'ভুল পিন', text: 'পিন কোড সঠিক নয়!' });
                 }
             }
+        }
+
+        // Export Backup System (Download JSON file)
+        function exportBackup() {
+            const tx = db.transaction("customers", "readonly");
+            const store = tx.objectStore("customers");
+            const getAll = store.getAll();
+
+            getAll.onsuccess = () => {
+                const backupData = {
+                    version: "1.0",
+                    generatedAt: new Date().toISOString(),
+                    data: getAll.result
+                };
+
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData));
+                const downloadAnchor = document.createElement('a');
+                
+                // Formatted Date for File Name
+                const dateStr = new Date().toLocaleDateString('bn-BD').replace(/\//g, '-');
+                downloadAnchor.setAttribute("href", dataStr);
+                downloadAnchor.setAttribute("download", `আমার_হিসাব_ব্যাকআপ_${dateStr}.json`);
+                document.body.appendChild(downloadAnchor);
+                downloadAnchor.click();
+                downloadAnchor.remove();
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'ব্যাকআপ সফল',
+                    text: 'আপনার হিসাবের ফাইলটি সুরক্ষিতভাবে ডাউনলোড হয়েছে। এটিকে যত্ন সহকারে রাখুন।',
+                    confirmButtonColor: '#1e3a8a'
+                });
+            };
+        }
+
+        // Trigger Hidden File Input for Import
+        function importBackup() {
+            document.getElementById('backup-file-input').click();
+        }
+
+        // Handle Selected Backup File
+        function handleBackupFile(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const importedObj = JSON.parse(e.target.result);
+                    
+                    // Validation Check
+                    if (!importedObj.data || !Array.isArray(importedObj.data)) {
+                        throw new Error("ভুল ফাইল ফরম্যাট");
+                    }
+
+                    // Security PIN verification before restoring
+                    const { value: pin } = await Swal.fire({
+                        title: 'পিন ভেরিফাই করুন',
+                        text: 'ব্যাকআপ ডেটা রিস্টোর করার জন্য আপনার ৪ ডিজিটের লগইন পিন দিন:',
+                        input: 'password',
+                        inputPlaceholder: '••••',
+                        inputAttributes: { maxlength: 4 },
+                        showCancelButton: true,
+                        confirmButtonColor: '#10b981',
+                        confirmButtonText: 'তথ্য আমদানি করুন',
+                        cancelButtonText: 'বাতিল'
+                    });
+
+                    if (pin) {
+                        if (pin === currentUserPin) {
+                            // Clear and insert data into IndexedDB
+                            const tx = db.transaction("customers", "readwrite");
+                            const store = tx.objectStore("customers");
+                            
+                            // Clear existing customers first
+                            store.clear();
+                            
+                            // Inject imported customers
+                            importedObj.data.forEach(cust => {
+                                store.put(cust);
+                            });
+
+                            tx.oncomplete = () => {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'আমদানি সম্পন্ন',
+                                    text: 'আপনার ব্যাকআপ ফাইল থেকে সকল তথ্য সফলভাবে অ্যাপে যুক্ত করা হয়েছে।',
+                                    confirmButtonColor: '#1e3a8a'
+                                });
+                                loadCustomers(); // Refresh UI list
+                            };
+                        } else {
+                            Swal.fire({ icon: 'error', title: 'ভুল পিন', text: 'পিন কোড সঠিক নয়, ব্যাকআপ আমদানি বাতিল করা হয়েছে।' });
+                        }
+                    }
+                } catch (err) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'ব্যর্থ হয়েছে',
+                        text: 'সঠিক ব্যাকআপ ফাইল (.json) নির্বাচন করুন।'
+                    });
+                } finally {
+                    input.value = ''; // Reset input
+                }
+            };
+            reader.readAsText(file);
         }
 
         // PWA Installation Setup
@@ -397,22 +508,28 @@
             e.preventDefault();
             deferredPrompt = e;
             document.getElementById('install-btn').classList.remove('hidden-section');
+            document.getElementById('install-btn-desktop').classList.remove('hidden-section');
         });
 
-        document.getElementById('install-btn').addEventListener('click', async () => {
+        const installApp = async () => {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
                 const { outcome } = await deferredPrompt.userChoice;
                 if (outcome === 'accepted') {
                     document.getElementById('install-btn').classList.add('hidden-section');
+                    document.getElementById('install-btn-desktop').classList.add('hidden-section');
                 }
                 deferredPrompt = null;
             }
-        });
+        };
+
+        document.getElementById('install-btn').addEventListener('click', installApp);
+        document.getElementById('install-btn-desktop').addEventListener('click', installApp);
 
         window.addEventListener('appinstalled', () => {
             document.getElementById('install-btn').classList.add('hidden-section');
-            Swal.fire({ icon: 'success', title: 'ধন্যবাদ!', text: 'আমার হিসাব অ্যাপটি আপনার ডিভাইসে সফলভাবে ডাউনলোড হয়েছে।' });
+            document.getElementById('install-btn-desktop').classList.add('hidden-section');
+            Swal.fire({ icon: 'success', title: 'ধন্যবাদ!', text: 'আমার হিসাব অ্যাপটি আপনার ডিভাইসে সফলভাবে ডাউনলোড হয়েছে।' });
         });
 
         if ('serviceWorker' in navigator) {
