@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ডিজিটাল টালিখাতা</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%231e3a8a%22/><text y=%2270%22 x=%2215%22 font-size=%2265%22 fill=%22white%22 font-family=%22serif%22>টা</text></svg>">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1e3a8a">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .hidden-section { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+
+    <div id="auth-section" class="flex-1 flex items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100 text-center">
+            <div class="flex justify-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-20 h-20">
+                    <rect width="100" height="100" rx="20" fill="#1e3a8a"/>
+                    <text y="70" x="15" font-size="65" fill="white" font-family="serif">টা</text>
+                </svg>
+            </div>
+            <h2 class="text-2xl font-bold text-blue-900 mb-2">ডিজিটাল টালিখাতা</h2>
+            <p class="text-gray-500 text-sm mb-6">আপনার ব্যবসার হিসাব রাখুন নিরাপদে আপনার ডিভাইসে</p>
+            
+            <div id="pin-setup-msg" class="mb-4 text-sm text-green-600 font-medium hidden-section">নতুন ৪ ডিজিটের পিন সেট করুন</div>
+            <div id="pin-login-msg" class="mb-4 text-sm text-blue-600 font-medium">লগইন করতে ৪ ডিজিটের পিন দিন</div>
+            
+            <input type="password" id="auth-pin" maxlength="4" placeholder="••••" class="w-32 text-center text-3xl letter-spacing-4 border-2 border-gray-300 rounded-lg p-2 mb-6 focus:outline-none focus:border-blue-900 tracking-widest">
+            
+            <button onclick="handleAuth()" class="w-full bg-blue-900 text-white py-3 rounded-xl font-semibold hover:bg-blue-800 transition duration-200 shadow-md">প্রবেশ করুন</button>
+        </div>
+    </div>
+
+    <div id="app-section" class="hidden-section flex flex-col flex-1">
+        <header class="bg-blue-900 text-white px-4 py-4 shadow-md sticky top-0 z-50 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-9 h-9">
+                    <rect width="100" height="100" rx="20" fill="white"/>
+                    <text y="70" x="15" font-size="65" fill="#1e3a8a" font-family="serif">টা</text>
+                </svg>
+                <h1 class="text-xl font-bold">ডিজিটাল টালিখাতা</h1>
+            </div>
+            <div class="flex items-center gap-2">
+                <button id="install-btn" class="hidden-section bg-amber-500 hover:bg-amber-600 text-xs text-white font-bold px-3 py-2 rounded-lg transition shadow">এপ্স ডাউনলোড</button>
+                <button onclick="logout()" class="bg-red-600 hover:bg-red-700 text-xs px-3 py-2 rounded-lg font-medium transition">লগআউট</button>
+            </div>
+        </header>
+
+        <main class="p-4 max-w-4xl mx-auto w-full flex-1">
+            <div class="grid grid-cols-3 gap-3 mb-6">
+                <div class="bg-green-50 p-4 rounded-xl border border-green-200 text-center shadow-sm">
+                    <p class="text-xs text-green-700 font-medium mb-1">মোট পাবো (তাগাদা)</p>
+                    <p id="total-receivable" class="text-lg font-bold text-green-600">৳ ০</p>
+                </div>
+                <div class="bg-red-50 p-4 rounded-xl border border-red-200 text-center shadow-sm">
+                    <p class="text-xs text-red-700 font-medium mb-1">মোট দেবো (বাকি)</p>
+                    <p id="total-payable" class="text-lg font-bold text-red-600">৳ ০</p>
+                </div>
+                <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 text-center shadow-sm">
+                    <p class="text-xs text-blue-700 font-medium mb-1">নিট ব্যালেন্স</p>
+                    <p id="net-balance" class="text-lg font-bold text-blue-900">৳ ০</p>
+                </div>
+            </div>
+
+            <div class="flex gap-2 mb-4">
+                <input type="text" id="search-input" oninput="renderCustomers()" placeholder="গ্রাহকের নাম খুঁজুন..." class="flex-1 px-4 py-2 border rounded-xl focus:outline-none focus:border-blue-900 shadow-sm text-sm">
+                <button onclick="openAddCustomerModal()" class="bg-blue-900 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-blue-800 transition shadow">+ নতুন কাস্টমার</button>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="p-4 border-b border-gray-100 bg-gray-50/70">
+                    <h3 class="font-bold text-gray-700">গ্রাহক তালিকা ও হিসাব</h3>
+                </div>
+                <div id="customer-list" class="divide-y divide-gray-100">
+                    </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let db;
+        let currentUserPin = null;
+        let customers = [];
+        let deferredPrompt;
+
+        // Initialize IndexedDB
+        const request = indexedDB.open("TaliKhataDB", 1);
+        request.onupgradeneeded = (e) => {
+            db = e.target.result;
+            if (!db.objectStoreNames.contains("settings")) db.createObjectStore("settings");
+            if (!db.objectStoreNames.contains("customers")) db.createObjectStore("customers", { keyPath: "id" });
+        };
+        request.onsuccess = (e) => {
+            db = e.target.result;
+            checkAuthStatus();
+        };
+
+        // Auth Logic
+        function checkAuthStatus() {
+            const tx = db.transaction("settings", "readonly");
+            const store = tx.objectStore("settings");
+            const getPin = store.get("user_pin");
+            
+            getPin.onsuccess = () => {
+                if (getPin.result) {
+                    currentUserPin = getPin.result;
+                    document.id = "login-mode";
+                } else {
+                    document.getElementById('pin-setup-msg').classList.remove('hidden-section');
+                    document.getElementById('pin-login-msg').classList.add('hidden-section');
+                }
+            };
+        }
+
+        function handleAuth() {
+            const pinInput = document.getElementById('auth-pin').value;
+            if (pinInput.length !== 4) {
+                Swal.fire({ icon: 'error', title: 'ভুল ইনপুট', text: '৪ ডিজিটের পিন দিন।' });
+                return;
+            }
+
+            if (!currentUserPin) {
+                // Setup New PIN
+                const tx = db.transaction("settings", "readwrite");
+                tx.objectStore("settings").put(pinInput, "user_pin");
+                currentUserPin = pinInput;
+                Swal.fire({ icon: 'success', title: 'পিন সেট হয়েছে', text: 'আপনার সিকিউরিটি পিন সফলভাবে তৈরি হয়েছে।', timer: 2000, showConfirmButton: false });
+                loadApp();
+            } else {
+                // Login validation
+                if (pinInput === currentUserPin) {
+                    loadApp();
+                } else {
+                    Swal.fire({ icon: 'error', title: 'ভুল পিন', text: 'সঠিক পিন নাম্বার দিয়ে আবার চেষ্টা করুন।' });
+                }
+            }
+        }
+
+        function loadApp() {
+            document.getElementById('auth-section').classList.add('hidden-section');
+            document.getElementById('app-section').classList.remove('hidden-section');
+            loadCustomers();
+        }
+
+        function logout() {
+            document.getElementById('auth-pin').value = '';
+            document.getElementById('app-section').classList.add('hidden-section');
+            document.getElementById('auth-section').classList.remove('hidden-section');
+            checkAuthStatus();
+        }
+
+        // Data Management
+        function loadCustomers() {
+            const tx = db.transaction("customers", "readonly");
+            const store = tx.objectStore("customers");
+            const getAll = store.getAll();
+            
+            getAll.onsuccess = () => {
+                customers = getAll.result;
+                renderCustomers();
+            };
+        }
+
+        function renderCustomers() {
+            const listContainer = document.getElementById('customer-list');
+            const searchQuery = document.getElementById('search-input').value.toLowerCase();
+            listContainer.innerHTML = '';
+            
+            let totalReceivable = 0;
+            let totalPayable = 0;
+
+            const filteredCustomers = customers.filter(c => c.name.toLowerCase().includes(searchQuery) || c.phone.includes(searchQuery));
+
+            if(filteredCustomers.length === 0) {
+                listContainer.innerHTML = `<p class="p-8 text-center text-gray-400 text-sm">কোনো কাস্টমার পাওয়া যায়নি।</p>`;
+            }
+
+            filteredCustomers.forEach(customer => {
+                let balance = 0;
+                customer.transactions.forEach(t => {
+                    if (t.type === 'get') balance += t.amount;
+                    if (t.type === 'give') balance -= t.amount;
+                });
+
+                if (balance > 0) totalReceivable += balance;
+                if (balance < 0) totalPayable += Math.abs(balance);
+
+                const balanceText = balance >= 0 ? `৳ ${balance} (পাবো)` : `৳ ${Math.abs(balance)} (দেবো)`;
+                const balanceClass = balance > 0 ? 'text-green-600' : balance < 0 ? 'text-red-600' : 'text-gray-500';
+
+                const div = document.createElement('div');
+                div.className = "p-4 flex justify-between items-center hover:bg-gray-50 transition";
+                div.innerHTML = `
+                    <div onclick="viewCustomerTransactions('${customer.id}')" class="cursor-pointer flex-1">
+                        <h4 class="font-semibold text-gray-900">${customer.name}</h4>
+                        <p class="text-xs text-gray-500">${customer.phone || 'মোবাইল নম্বর নেই'}</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="font-bold ${balanceClass}">${balanceText}</span>
+                        <button onclick="deleteCustomer('${customer.id}')" class="text-red-400 hover:text-red-600 text-sm p-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        </button>
+                    </div>
+                `;
+                listContainer.appendChild(div);
+            });
+
+            document.getElementById('total-receivable').innerText = `৳ ${totalReceivable}`;
+            document.getElementById('total-payable').innerText = `৳ ${totalPayable}`;
+            const net = totalReceivable - totalPayable;
+            document.getElementById('net-balance').innerText = `৳ ${net}`;
+            document.getElementById('net-balance').className = `text-lg font-bold ${net >= 0 ? 'text-green-600' : 'text-red-600'}`;
+        }
+
+        async function openAddCustomerModal() {
+            const { value: formValues } = await Swal.fire({
+                title: 'নতুন গ্রাহক যোগ করুন',
+                html:
+                    '<input id="swal-input1" class="swal2-input" placeholder="গ্রাহকের নাম (আবশ্যক)">' +
+                    '<input id="swal-input2" class="swal2-input" placeholder="মোবাইল নম্বর (ঐচ্ছিক)">',
+                focusConfirm: false,
+                confirmButtonText: 'সংরক্ষণ করুন',
+                confirmButtonColor: '#1e3a8a',
+                showCancelButton: true,
+                cancelButtonText: 'বাতিল',
+                preConfirm: () => {
+                    const name = document.getElementById('swal-input1').value.trim();
+                    const phone = document.getElementById('swal-input2').value.trim();
+                    if (!name) {
+                        Swal.showValidationMessage('অনুগ্রহ করে নাম লিখুন');
+                    }
+                    return { name, phone };
+                }
+            });
+
+            if (formValues) {
+                const newCustomer = {
+                    id: 'cust_' + Date.now(),
+                    name: formValues.name,
+                    phone: formValues.phone,
+                    transactions: []
+                };
+                const tx = db.transaction("customers", "readwrite");
+                tx.objectStore("customers").add(newCustomer);
+                tx.oncomplete = () => {
+                    Swal.fire({ icon: 'success', title: 'সফল', text: 'নতুন গ্রাহক তালিকাভুক্ত হয়েছে।', timer: 1500, showConfirmButton: false });
+                    loadCustomers();
+                };
+            }
+        }
+
+        async function viewCustomerTransactions(id) {
+            const customer = customers.find(c => c.id === id);
+            if (!customer) return;
+
+            let txHtml = customer.transactions.map((t, index) => `
+                <div class="flex justify-between items-center py-2 border-b text-sm">
+                    <span class="text-gray-500 text-xs">${t.date}</span>
+                    <span class="font-medium text-gray-700">${t.note || 'বিবরণ নেই'}</span>
+                    <span class="${t.type === 'get' ? 'text-green-600' : 'text-red-600'} font-bold">
+                        ${t.type === 'get' ? '+' : '-'} ৳${t.amount}
+                    </span>
+                    <button onclick="Swal.close(); deleteTransaction('${customer.id}', ${index})" class="text-red-400 hover:text-red-600 text-xs ml-2">মুছুন</button>
+                </div>
+            `).join('');
+
+            if(customer.transactions.length === 0) txHtml = '<p class="text-gray-400 text-sm py-4">কোনো লেনদেন নেই।</p>';
+
+            await Swal.fire({
+                title: `<span class="text-blue-900">${customer.name}</span>`,
+                html: `
+                    <p class="text-xs text-gray-500 mb-4">${customer.phone || ''}</p>
+                    <div class="flex gap-2 mb-4 justify-center">
+                        <button onclick="Swal.close(); openAddTransactionModal('${customer.id}', 'get')" class="bg-green-600 text-white px-4 py-2 rounded-lg text-xs font-bold">+ পাবো (জমা)</button>
+                        <button onclick="Swal.close(); openAddTransactionModal('${customer.id}', 'give')" class="bg-red-600 text-white px-4 py-2 rounded-lg text-xs font-bold">- দেবো (বাকি)</button>
+                    </div>
+                    <h4 class="text-left font-bold text-gray-700 text-sm mb-2 border-b pb-1">লেনদেনের ইতিহাস:</h4>
+                    <div class="max-h-60 overflow-y-auto">${txHtml}</div>
+                `,
+                showConfirmButton: false,
+                showCloseButton: true
+            });
+        }
+
+        async function openAddTransactionModal(customerId, type) {
+            const title = type === 'get' ? 'পাবো (জমা) যোগ করুন' : 'দেবো (বাকি) যোগ করুন';
+            const { value: formValues } = await Swal.fire({
+                title: title,
+                html:
+                    '<input id="tx-amount" type="number" class="swal2-input" placeholder="টাকার পরিমাণ (৳)">' +
+                    '<input id="tx-note" class="swal2-input" placeholder="বিবরণ (যেমন: চাল বিক্রি)">',
+                focusConfirm: false,
+                confirmButtonText: 'যোগ করুন',
+                confirmButtonColor: type === 'get' ? '#16a34a' : '#dc2626',
+                showCancelButton: true,
+                cancelButtonText: 'বাতিল',
+                preConfirm: () => {
+                    const amount = parseFloat(document.getElementById('tx-amount').value);
+                    const note = document.getElementById('tx-note').value.trim();
+                    if (!amount || amount <= 0) {
+                        Swal.showValidationMessage('সঠিক টাকার পরিমাণ লিখুন');
+                    }
+                    return { amount, note };
+                }
+            });
+
+            if (formValues) {
+                const customer = customers.find(c => c.id === customerId);
+                const newTx = {
+                    amount: formValues.amount,
+                    note: formValues.note,
+                    type: type,
+                    date: new Date().toLocaleDateString('bn-BD')
+                };
+                customer.transactions.push(newTx);
+
+                const tx = db.transaction("customers", "readwrite");
+                tx.objectStore("customers").put(customer);
+                tx.oncomplete = () => {
+                    Swal.fire({ icon: 'success', title: 'লেনদেন যুক্ত হয়েছে', timer: 1000, showConfirmButton: false });
+                    loadCustomers();
+                };
+            }
+        }
+
+        // Secure Delete with Password (PIN)
+        async function deleteCustomer(id) {
+            const { value: pin } = await Swal.fire({
+                title: 'গ্রাহক ডিলিট নিশ্চিত করুন',
+                text: 'গ্রাহকের সম্পূর্ণ হিসাব মুছে যাবে! নিশ্চিত করতে আপনার ৪ ডিজিটের পিন কোড দিন:',
+                input: 'password',
+                inputPlaceholder: '••••',
+                inputAttributes: { maxlength: 4, autocapitalize: 'off', autocorrect: 'off' },
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                confirmButtonText: 'ডিলিট করুন',
+                cancelButtonText: 'বাতিল'
+            });
+
+            if (pin) {
+                if (pin === currentUserPin) {
+                    const tx = db.transaction("customers", "readwrite");
+                    tx.objectStore("customers").delete(id);
+                    tx.oncomplete = () => {
+                        Swal.fire({ icon: 'success', title: 'ডিলিট সম্পন্ন হয়েছে', text: 'গ্রাহকের তথ্য মুছে ফেলা হয়েছে।', timer: 1500, showConfirmButton: false });
+                        loadCustomers();
+                    };
+                } else {
+                    Swal.fire({ icon: 'error', title: 'ভুল পিন', text: 'পিন কোড সঠিক নয়, ডিলিট করা যায়নি।' });
+                }
+            }
+        }
+
+        async function deleteTransaction(customerId, index) {
+            const { value: pin } = await Swal.fire({
+                title: 'লেনদেন ডিলিট নিশ্চিত করুন',
+                text: 'এই লেনদেনটি মুছে ফেলতে আপনার ৪ ডিজিটের পিন কোড দিন:',
+                input: 'password',
+                inputPlaceholder: '••••',
+                inputAttributes: { maxlength: 4 },
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                confirmButtonText: 'ডিলিট করুন',
+                cancelButtonText: 'বাতিল'
+            });
+
+            if (pin) {
+                if (pin === currentUserPin) {
+                    const customer = customers.find(c => c.id === customerId);
+                    customer.transactions.splice(index, 1);
+
+                    const tx = db.transaction("customers", "readwrite");
+                    tx.objectStore("customers").put(customer);
+                    tx.oncomplete = () => {
+                        Swal.fire({ icon: 'success', title: 'ডিলিট হয়েছে', timer: 1000, showConfirmButton: false });
+                        loadCustomers();
+                    };
+                } else {
+                    Swal.fire({ icon: 'error', title: 'ভুল পিন', text: 'পিন কোড সঠিক নয়!' });
+                }
+            }
+        }
+
+        // PWA Installation Setup
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('install-btn').classList.remove('hidden-section');
+        });
+
+        document.getElementById('install-btn').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    document.getElementById('install-btn').classList.add('hidden-section');
+                }
+                deferredPrompt = null;
+            }
+        });
+
+        window.addEventListener('appinstalled', () => {
+            document.getElementById('install-btn').classList.add('hidden-section');
+            Swal.fire({ icon: 'success', title: 'ধন্যবাদ!', text: 'টালিখাতা অ্যাপটি আপনার ডিভাইসে সফলভাবে ডাউনলোড হয়েছে।' });
+        });
+
+        // Register Service Worker for Offline Use
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(() => console.log("Service Worker Registered Successfully"))
+                .catch(err => console.log("Service Worker Registration Failed", err));
+        }
+    </script>
+</body>
+</html>
