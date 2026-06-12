@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ডিজিটাল টালিখাতা</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%231e3a8a%22/><text y=%2270%22 x=%2215%22 font-size=%2265%22 fill=%22white%22 font-family=%22serif%22>টা</text></svg>">
+    <title>আমার হিসাব</title>
+    <link rel="icon" type="image/png" href="https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?w=128&auto=format&fit=crop&q=60">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1e3a8a">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -19,13 +19,10 @@
     <div id="auth-section" class="flex-1 flex items-center justify-center p-4">
         <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100 text-center">
             <div class="flex justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-20 h-20">
-                    <rect width="100" height="100" rx="20" fill="#1e3a8a"/>
-                    <text y="70" x="15" font-size="65" fill="white" font-family="serif">টা</text>
-                </svg>
+                <img src="https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?w=128&auto=format&fit=crop&q=60" alt="Logo" class="w-20 h-20 rounded-2xl shadow-md">
             </div>
-            <h2 class="text-2xl font-bold text-blue-900 mb-2">ডিজিটাল টালিখাতা</h2>
-            <p class="text-gray-500 text-sm mb-6">আপনার ব্যবসার হিসাব রাখুন নিরাপদে আপনার ডিভাইসে</p>
+            <h2 class="text-2xl font-bold text-blue-900 mb-2">আমার হিসাব</h2>
+            <p class="text-gray-500 text-sm mb-6">আপনার ডিভাইসে নিরাপদ ও ব্যক্তিগত ডিজিটাল খাতা</p>
             
             <div id="pin-setup-msg" class="mb-4 text-sm text-green-600 font-medium hidden-section">নতুন ৪ ডিজিটের পিন সেট করুন</div>
             <div id="pin-login-msg" class="mb-4 text-sm text-blue-600 font-medium">লগইন করতে ৪ ডিজিটের পিন দিন</div>
@@ -39,11 +36,8 @@
     <div id="app-section" class="hidden-section flex flex-col flex-1">
         <header class="bg-blue-900 text-white px-4 py-4 shadow-md sticky top-0 z-50 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-9 h-9">
-                    <rect width="100" height="100" rx="20" fill="white"/>
-                    <text y="70" x="15" font-size="65" fill="#1e3a8a" font-family="serif">টা</text>
-                </svg>
-                <h1 class="text-xl font-bold">ডিজিটাল টালিখাতা</h1>
+                <img src="https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?w=64&auto=format&fit=crop&q=60" alt="Logo" class="w-9 h-9 rounded-lg">
+                <h1 class="text-xl font-bold">আমার হিসাব</h1>
             </div>
             <div class="flex items-center gap-2">
                 <button id="install-btn" class="hidden-section bg-amber-500 hover:bg-amber-600 text-xs text-white font-bold px-3 py-2 rounded-lg transition shadow">এপ্স ডাউনলোড</button>
@@ -54,11 +48,11 @@
         <main class="p-4 max-w-4xl mx-auto w-full flex-1">
             <div class="grid grid-cols-3 gap-3 mb-6">
                 <div class="bg-green-50 p-4 rounded-xl border border-green-200 text-center shadow-sm">
-                    <p class="text-xs text-green-700 font-medium mb-1">মোট পাবো (তাগাদা)</p>
+                    <p class="text-xs text-green-700 font-medium mb-1">মোট পাবো</p>
                     <p id="total-receivable" class="text-lg font-bold text-green-600">৳ ০</p>
                 </div>
                 <div class="bg-red-50 p-4 rounded-xl border border-red-200 text-center shadow-sm">
-                    <p class="text-xs text-red-700 font-medium mb-1">মোট দেবো (বাকি)</p>
+                    <p class="text-xs text-red-700 font-medium mb-1">মোট দেবো</p>
                     <p id="total-payable" class="text-lg font-bold text-red-600">৳ ০</p>
                 </div>
                 <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 text-center shadow-sm">
@@ -89,7 +83,7 @@
         let deferredPrompt;
 
         // Initialize IndexedDB
-        const request = indexedDB.open("TaliKhataDB", 1);
+        const request = indexedDB.open("AmarHisabDB", 1);
         request.onupgradeneeded = (e) => {
             db = e.target.result;
             if (!db.objectStoreNames.contains("settings")) db.createObjectStore("settings");
@@ -109,7 +103,8 @@
             getPin.onsuccess = () => {
                 if (getPin.result) {
                     currentUserPin = getPin.result;
-                    document.id = "login-mode";
+                    document.getElementById('pin-setup-msg').classList.add('hidden-section');
+                    document.getElementById('pin-login-msg').classList.remove('hidden-section');
                 } else {
                     document.getElementById('pin-setup-msg').classList.remove('hidden-section');
                     document.getElementById('pin-login-msg').classList.add('hidden-section');
@@ -125,14 +120,12 @@
             }
 
             if (!currentUserPin) {
-                // Setup New PIN
                 const tx = db.transaction("settings", "readwrite");
                 tx.objectStore("settings").put(pinInput, "user_pin");
                 currentUserPin = pinInput;
                 Swal.fire({ icon: 'success', title: 'পিন সেট হয়েছে', text: 'আপনার সিকিউরিটি পিন সফলভাবে তৈরি হয়েছে।', timer: 2000, showConfirmButton: false });
                 loadApp();
             } else {
-                // Login validation
                 if (pinInput === currentUserPin) {
                     loadApp();
                 } else {
@@ -335,7 +328,7 @@
                 text: 'গ্রাহকের সম্পূর্ণ হিসাব মুছে যাবে! নিশ্চিত করতে আপনার ৪ ডিজিটের পিন কোড দিন:',
                 input: 'password',
                 inputPlaceholder: '••••',
-                inputAttributes: { maxlength: 4, autocapitalize: 'off', autocorrect: 'off' },
+                inputAttributes: { maxlength: 4 },
                 showCancelButton: true,
                 confirmButtonColor: '#dc2626',
                 confirmButtonText: 'ডিলিট করুন',
@@ -406,14 +399,13 @@
 
         window.addEventListener('appinstalled', () => {
             document.getElementById('install-btn').classList.add('hidden-section');
-            Swal.fire({ icon: 'success', title: 'ধন্যবাদ!', text: 'টালিখাতা অ্যাপটি আপনার ডিভাইসে সফলভাবে ডাউনলোড হয়েছে।' });
+            Swal.fire({ icon: 'success', title: 'ধন্যবাদ!', text: 'আমার হিসাব অ্যাপটি আপনার ডিভাইসে সফলভাবে ডাউনলোড হয়েছে।' });
         });
 
-        // Register Service Worker for Offline Use
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js')
-                .then(() => console.log("Service Worker Registered Successfully"))
-                .catch(err => console.log("Service Worker Registration Failed", err));
+                .then(() => console.log("Service Worker Registered"))
+                .catch(err => console.log("Service Worker Failed", err));
         }
     </script>
 </body>
