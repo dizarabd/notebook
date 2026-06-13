@@ -44,7 +44,7 @@
             </div>
             
             <div class="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto border-t border-blue-800 pt-2 sm:pt-0 sm:border-0">
-                <div class="flex gap-1.5">
+                <div class="flex gap-1.5 border-r border-blue-800 pr-2 mr-1">
                     <button onclick="exportBackup()" class="bg-blue-700 hover:bg-blue-600 text-[11px] text-white font-medium px-2.5 py-1.5 rounded-lg transition shadow flex items-center gap-1">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                         ব্যাকআপ ডাউনলোড
@@ -54,8 +54,12 @@
                         ব্যাকআপ ইম্পোর্ট
                     </button>
                 </div>
-                <div class="flex gap-1.5">
+                <div class="flex gap-1.5 items-center">
                     <button id="install-btn-desktop" class="hidden-section hidden sm:block bg-amber-500 hover:bg-amber-600 text-xs text-white font-bold px-3 py-2 rounded-lg transition shadow">এপ্স ডাউনলোড</button>
+                    <button onclick="changePinSetting()" class="bg-slate-700 hover:bg-slate-600 text-xs px-3 py-2 rounded-lg font-medium transition shadow flex items-center gap-1" title="পিন পরিবর্তন করুন">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0' /></svg>
+                        পিন পরিবর্তন
+                    </button>
                     <button onclick="logout()" class="bg-red-600 hover:bg-red-700 text-xs px-3 py-2 rounded-lg font-medium transition shadow">লগআউট</button>
                 </div>
             </div>
@@ -163,6 +167,54 @@
             document.getElementById('app-section').classList.add('hidden-section');
             document.getElementById('auth-section').classList.remove('hidden-section');
             checkAuthStatus();
+        }
+
+        // Change Password / PIN Setting Function
+        async function changePinSetting() {
+            const { value: formValues } = await Swal.fire({
+                title: 'পিন কোড পরিবর্তন করুন',
+                html:
+                    '<input id="swal-old-pin" type="password" maxlength="4" class="swal2-input text-center tracking-widest" placeholder="বর্তমান পিন">' +
+                    '<input id="swal-new-pin" type="password" maxlength="4" class="swal2-input text-center tracking-widest" placeholder="নতুন ৪ ডিজিটের পিন">',
+                focusConfirm: false,
+                confirmButtonText: 'পরিবর্তন করুন',
+                confirmButtonColor: '#1e3a8a',
+                showCancelButton: true,
+                cancelButtonText: 'বাতিল',
+                preConfirm: () => {
+                    const oldPin = document.getElementById('swal-old-pin').value;
+                    const newPin = document.getElementById('swal-new-pin').value;
+                    
+                    if (oldPin.length !== 4 || newPin.length !== 4) {
+                        Swal.showValidationMessage('উভয় পিনই অবশ্যই ৪ ডিজিটের হতে হবে');
+                        return false;
+                    }
+                    if (oldPin !== currentUserPin) {
+                        Swal.showValidationMessage('বর্তমান পিন কোডটি সঠিক নয়');
+                        return false;
+                    }
+                    if (oldPin === newPin) {
+                        Swal.showValidationMessage('নতুন পিন এবং পুরাতন পিন একই হতে পারবে না');
+                        return false;
+                    }
+                    return { newPin };
+                }
+            });
+
+            if (formValues) {
+                const tx = db.transaction("settings", "readwrite");
+                tx.objectStore("settings").put(formValues.newPin, "user_pin");
+                tx.oncomplete = () => {
+                    currentUserPin = formValues.newPin;
+                    Swal.fire({ 
+                        icon: 'success', 
+                        title: 'পিন পরিবর্তিত হয়েছে', 
+                        text: 'আপনার সিকিউরিটি পিন সফলভাবে আপডেট করা হয়েছে।', 
+                        timer: 2000, 
+                        showConfirmButton: false 
+                    });
+                };
+            }
         }
 
         // Data Management
@@ -424,7 +476,7 @@
                 Swal.fire({
                     icon: 'success',
                     title: 'ব্যাকআপ সফল',
-                    text: 'আপনার হিসাবের ফাইলটি সুরক্ষিতভাবে ডাউনলোড হয়েছে। এটিকে যত্ন সহকারে রাখুন।',
+                    text: 'আপনার হিসাবের ফাইলটি সুরক্ষিতভাবে ডাউনলোড হয়েছে। এটিকে যত্ন সহকারে রাখুন।',
                     confirmButtonColor: '#1e3a8a'
                 });
             };
@@ -481,19 +533,19 @@
                                 Swal.fire({
                                     icon: 'success',
                                     title: 'আমদানি সম্পন্ন',
-                                    text: 'আপনার ব্যাকআপ ফাইল থেকে সকল তথ্য সফলভাবে অ্যাপে যুক্ত করা হয়েছে।',
+                                    text: 'আপনার ব্যাকআপ ফাইল থেকে সকল তথ্য সফলভাবে অ্যাপে যুক্ত করা হয়েছে।',
                                     confirmButtonColor: '#1e3a8a'
                                 });
                                 loadCustomers(); // Refresh UI list
                             };
                         } else {
-                            Swal.fire({ icon: 'error', title: 'ভুল পিন', text: 'পিন কোড সঠিক নয়, ব্যাকআপ আমদানি বাতিল করা হয়েছে।' });
+                            Swal.fire({ icon: 'error', title: 'ভুল পিন', text: 'পিন কোড সঠিক নয়, ব্যাকআপ আমদানি বাতিল করা হয়েছে।' });
                         }
                     }
                 } catch (err) {
                     Swal.fire({
                         icon: 'error',
-                        title: 'ব্যর্থ হয়েছে',
+                        title: 'ব্যর্থ হয়েছে',
                         text: 'সঠিক ব্যাকআপ ফাইল (.json) নির্বাচন করুন।'
                     });
                 } finally {
