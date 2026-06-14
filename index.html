@@ -24,7 +24,6 @@
             <h2 class="text-2xl font-bold text-blue-900 mb-2">আমার হিসাব</h2>
             <p class="text-gray-500 text-sm mb-6">আপনার ডিভাইসে নিরাপদ ও ব্যক্তিগত ডিজিটাল খাতা</p>
             
-            <!-- Setup Fields -->
             <div id="setup-fields" class="hidden-section mb-4 text-left">
                 <p class="text-green-600 text-sm font-medium mb-3 text-center">নতুন ৪ ডিজিটের পিন ও রিকভারি সেট করুন</p>
                 <input type="password" id="setup-pin" maxlength="4" placeholder="নতুন ৪ ডিজিটের পিন" class="w-full text-center text-xl border-2 border-gray-300 rounded-lg p-2 mb-3 focus:outline-none focus:border-blue-900 tracking-widest">
@@ -32,14 +31,13 @@
                 <label class="text-xs text-gray-500 block mb-1">পিন ভুলে গেলে পুনরুদ্ধারের জন্য প্রশ্ন সিলেক্ট করুন:</label>
                 <select id="setup-question" class="w-full border-2 border-gray-300 rounded-lg p-2 mb-3 text-sm focus:outline-none focus:border-blue-900">
                     <option value="আপনার প্রথম স্কুলের নাম কি?">আপনার প্রথম স্কুলের নাম কি?</option>
-                    <option value="আপনার প্রিয় রঙের নাম কি?">আপনার প্রিয় রঙের নাম কি?</option>
-                    <option value="আপনার প্রিয় শিক্ষকের নাম কি?">আপনার প্রিয় শিক্ষকের নাম কি?</option>
-                    <option value="আপনার জন্মস্থান কোথায়?">আপনার জন্মস্থান কোথায়?</option>
+                    <option value="আপনার প্রিয় রঙের নাম কি?">আপনার প্রিয় রঙের নাম কি?</option>
+                    <option value="আপনার প্রিয় শিক্ষকের নাম কি?">আপনার প্রিয় শিক্ষকের নাম কি?</option>
+                    <option value="আপনার জন্মস্থান কোথায়?">আপনার জন্মস্থান কোথায়?</option>
                 </select>
                 <input type="text" id="setup-answer" placeholder="আপনার উত্তরটি লিখুন" class="w-full border-2 border-gray-300 rounded-lg p-2 text-sm focus:outline-none focus:border-blue-900">
             </div>
 
-            <!-- Login Fields -->
             <div id="login-fields" class="mb-4">
                 <p class="text-blue-600 text-sm font-medium mb-4">লগইন করতে ৪ ডিজিটের পিন দিন</p>
                 <input type="password" id="auth-pin" maxlength="4" placeholder="••••" class="w-32 text-center text-3xl border-2 border-gray-300 rounded-lg p-2 mb-2 focus:outline-none focus:border-blue-900 tracking-widest">
@@ -57,7 +55,10 @@
                     <img src="logo.png" alt="Logo" class="w-9 h-9 rounded-lg">
                     <h1 class="text-xl font-bold">আমার হিসাব</h1>
                 </div>
-                <button id="install-btn" class="hidden-section sm:hidden bg-amber-500 hover:bg-amber-600 text-xs text-white font-bold px-3 py-2 rounded-lg transition shadow">এপ্স ডাউনলোড</button>
+                <div class="flex items-center gap-2">
+                    <button id="install-btn" class="hidden-section sm:hidden bg-amber-500 hover:bg-amber-600 text-xs text-white font-bold px-3 py-2 rounded-lg transition shadow">এপ্স ডাউনলোড</button>
+                    <button onclick="logout()" class="sm:hidden bg-red-600 hover:bg-red-700 text-xs px-3 py-2 rounded-lg font-medium transition shadow">লগআউট</button>
+                </div>
             </div>
             
             <div class="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto border-t border-blue-800 pt-2 sm:pt-0 sm:border-0">
@@ -77,7 +78,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0" /></svg>
                         পিন পরিবর্তন
                     </button>
-                    <button onclick="logout()" class="bg-red-600 hover:bg-red-700 text-xs px-3 py-2 rounded-lg font-medium transition shadow">লগআউট</button>
+                    <button onclick="logout()" class="hidden sm:block bg-red-600 hover:bg-red-700 text-xs px-3 py-2 rounded-lg font-medium transition shadow">লগআউট</button>
                 </div>
             </div>
         </header>
@@ -146,7 +147,7 @@
             getPin.onsuccess = () => {
                 if (getPin.result) {
                     currentUserPin = getPin.result;
-                    currentQuestion = getQues.result || "আপনার প্রিয় রঙের নাম কি?";
+                    currentQuestion = getQues.result || "আপনার প্রিয় রঙের নাম কি?";
                     currentAnswer = getAns.result || "";
                     document.getElementById('setup-fields').classList.add('hidden-section');
                     document.getElementById('login-fields').classList.remove('hidden-section');
@@ -221,7 +222,7 @@
                     
                     // Master code bypassing (9988) or Valid Secret Answer matching
                     if (ans !== currentAnswer && ans !== "9988") {
-                        Swal.showValidationMessage('সিকিউরিটি উত্তরটি সঠিক নয়!');
+                        Swal.showValidationMessage('সিকিউরিটি উত্তরটি সঠিক নয়!');
                         return false;
                     }
                     if (newPin.length !== 4) {
@@ -238,7 +239,7 @@
                 tx.oncomplete = () => {
                     currentUserPin = formValues.newPin;
                     document.getElementById('auth-pin').value = '';
-                    Swal.fire({ icon: 'success', title: 'রিসেট সফল', text: 'নতুন পিন সফলভাবে আপডেট হয়েছে। নতুন পিন দিয়ে প্রবেশ করুন।', confirmButtonColor: '#1e3a8a' });
+                    Swal.fire({ icon: 'success', title: 'রিসেট সফল', text: 'নতুন পিন সফলভাবে আপডেট হয়েছে। নতুন পিন দিয়ে প্রবেশ করুন।', confirmButtonColor: '#1e3a8a' });
                 };
             }
         }
@@ -273,11 +274,11 @@
                     const newPin = document.getElementById('swal-new-pin').value;
                     
                     if (oldPin.length !== 4 || newPin.length !== 4) {
-                        Swal.showValidationMessage('উভয় পিনই অবশ্যই ৪ ডিজিটের হতে হবে');
+                        Swal.showValidationMessage('উভয় পিনই অবশ্যই ৪ ডিজিটের হতে হবে');
                         return false;
                     }
                     if (oldPin !== currentUserPin) {
-                        Swal.showValidationMessage('বর্তমান পিন কোডটি সঠিক নয়');
+                        Swal.showValidationMessage('বর্তমান পিন কোডটি সঠিক নয়');
                         return false;
                     }
                     if (oldPin === newPin) {
@@ -293,7 +294,7 @@
                 tx.objectStore("settings").put(formValues.newPin, "user_pin");
                 tx.oncomplete = () => {
                     currentUserPin = formValues.newPin;
-                    Swal.fire({ icon: 'success', title: 'পিন পরিবর্তিত হয়েছে', text: 'আপনার সিকিউরিটি পিন সফলভাবে আপডেট করা হয়েছে।', timer: 2000, showConfirmButton: false });
+                    Swal.fire({ icon: 'success', title: 'পিন পরিবর্তিত হয়েছে', text: 'আপনার সিকিউরিটি পিন সফলভাবে আপডেট করা হয়েছে।', timer: 2000, showConfirmButton: false });
                 };
             }
         }
@@ -578,62 +579,37 @@
                         inputAttributes: { maxlength: 4 },
                         showCancelButton: true,
                         confirmButtonColor: '#10b981',
-                        confirmButtonText: 'তথ্য আমদানি করুন',
+                        confirmButtonText: 'রিস্টোর করুন',
                         cancelButtonText: 'বাতিল'
                     });
 
-                    if (pin === currentUserPin) {
-                        const tx = db.transaction("customers", "readwrite");
-                        const store = tx.objectStore("customers");
-                        store.clear();
-                        importedObj.data.forEach(cust => store.put(cust));
+                    if (pin) {
+                        if (pin === currentUserPin) {
+                            const tx = db.transaction("customers", "readwrite");
+                            const store = tx.objectStore("customers");
+                            
+                            // Clear existing and add new
+                            const clearReq = store.clear();
+                            clearReq.onsuccess = () => {
+                                importedObj.data.forEach(customer => {
+                                    store.add(customer);
+                                });
+                            };
 
-                        tx.oncomplete = () => {
-                            Swal.fire({ icon: 'success', title: 'আমদানি সম্পন্ন', text: 'ব্যাকআপ সফলভাবে রিস্টোর হয়েছে।', confirmButtonColor: '#1e3a8a' });
-                            loadCustomers();
-                        };
-                    } else if(pin) {
-                        Swal.fire({ icon: 'error', title: 'ভুল পিন', text: 'পিন সঠিক নয়!' });
+                            tx.oncomplete = () => {
+                                Swal.fire({ icon: 'success', title: 'রিস্টোর সফল', text: 'আপনার ব্যাকআপ ডেটা সফলভাবে রিস্টোর হয়েছে।', timer: 2000, showConfirmButton: false });
+                                loadCustomers();
+                            };
+                        } else {
+                            Swal.fire({ icon: 'error', title: 'ভুল পিন', text: 'পিন কোড সঠিক নয়!' });
+                        }
                     }
                 } catch (err) {
-                    Swal.fire({ icon: 'error', title: 'ব্যর্থ হয়েছে', text: 'সঠিক ব্যাকআপ ফাইল (.json) নির্বাচন করুন।' });
-                } finally {
-                    input.value = '';
+                    Swal.fire({ icon: 'error', title: 'ব্যর্থ', text: 'ফাইলটি সঠিক ব্যাকআপ ফাইল নয়।' });
                 }
             };
             reader.readAsText(file);
-        }
-
-        // PWA Installation Setup
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            document.getElementById('install-btn').classList.remove('hidden-section');
-            document.getElementById('install-btn-desktop').classList.remove('hidden-section');
-        });
-
-        const installApp = async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    document.getElementById('install-btn').classList.add('hidden-section');
-                    document.getElementById('install-btn-desktop').classList.add('hidden-section');
-                }
-                deferredPrompt = null;
-            }
-        };
-
-        document.getElementById('install-btn').addEventListener('click', installApp);
-        document.getElementById('install-btn-desktop').addEventListener('click', installApp);
-
-        window.addEventListener('appinstalled', () => {
-            document.getElementById('install-btn').classList.add('hidden-section');
-            document.getElementById('install-btn-desktop').classList.add('hidden-section');
-        });
-
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').catch(err => console.log("SW failed", err));
+            input.value = ''; // Reset input
         }
     </script>
 </body>
